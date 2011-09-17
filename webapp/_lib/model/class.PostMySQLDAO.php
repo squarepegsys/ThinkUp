@@ -247,7 +247,7 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
             $order_by = $this->sanitizeOrderBy($order_by);
             $q .= " ORDER BY $order_by DESC ";
         } else {
-            $q .= " ORDER BY is_reply_by_friend DESC, follower_count desc ";
+            $q .= " ORDER BY is_reply_by_friend DESC, follower_count DESC, p.id DESC ";
         }
 
         $vars = array(
@@ -596,6 +596,7 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
     }
 
     public function addPost($vals) {
+        $vals['post_id'] = (string)$vals['post_id'];
         $retweeted_post_data = null;
         // first, check to see if this is a retweet, with the original post available.
         if (isset($vals['retweeted_post'])) {
@@ -632,6 +633,7 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
             }
             //process reply
             if (isset($vals['in_reply_to_post_id']) && $vals['in_reply_to_post_id'] != '') {
+                $vals['in_reply_to_post_id'] = (string) $vals['in_reply_to_post_id'];
                 $replied_to_post = $this->getPost($vals['in_reply_to_post_id'], $vals['network']);
                 if (isset($replied_to_post)) {
                     //check if reply author is followed by the original post author
@@ -645,6 +647,7 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
             }
             //process retweet
             if (isset($vals['in_retweet_of_post_id']) && $vals['in_retweet_of_post_id'] != '') {
+                $vals['in_retweet_of_post_id'] = (string) $vals['in_retweet_of_post_id'];
                 if (isset($retweeted_post_data)) {
                     // don't need database retrieval to get the necessary data-- use attached orig post info
                     $retweeted_post = $retweeted_post_data;
@@ -780,7 +783,7 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
         $q .= "   SELECT user_id FROM #prefix#follows AS f ";
         $q .= "   WHERE f.follower_id=:user_id AND f.active=1 AND f.network=:network ";
         $q .= ")";
-        $q .= "ORDER BY p.post_id DESC ";
+        $q .= "ORDER BY p.id DESC ";
         $q .= "LIMIT :start_on_record, :limit";
         $vars = array(
             ':user_id'=>$user_id,
@@ -1409,6 +1412,32 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
         $q .= "AND network=:network;";
         $vars = array(
             ':favlike_count_cache'=>$fav_like_count,
+            ':post_id'=>$post_id,
+            ':network'=>$network
+        );
+        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        $ps = $this->execute($q, $vars);
+        return $this->getUpdateCount($ps);
+    }
+
+    public function updateReplyCount($post_id, $network, $reply_count) {
+        $q = " UPDATE #prefix#posts SET reply_count_cache=:reply_count_cache WHERE post_id=:post_id ";
+        $q .= "AND network=:network;";
+        $vars = array(
+            ':reply_count_cache'=>$reply_count,
+            ':post_id'=>$post_id,
+            ':network'=>$network
+        );
+        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        $ps = $this->execute($q, $vars);
+        return $this->getUpdateCount($ps);
+    }
+
+    public function updateRetweetCount($post_id, $network, $retweet_count) {
+        $q = " UPDATE #prefix#posts SET retweet_count_cache=:retweet_count_cache WHERE post_id=:post_id ";
+        $q .= "AND network=:network;";
+        $vars = array(
+            ':retweet_count_cache'=>$retweet_count,
             ':post_id'=>$post_id,
             ':network'=>$network
         );
