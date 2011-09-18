@@ -70,7 +70,6 @@ class GooglePlusCrawler {
         if ($force_reload_from_googleplus || !$user_dao->isUserInDB($user_id, $network)) {
             // Get owner user details and save them to DB
             $fields = array('fields'=>'displayName,id,image,tagline');
-            //@TODO: Actually fetch user data from Google+ API
             $user_details = GooglePlusAPIAccessor::apiRequest('people/'.$user_id, $this->access_token, $fields);
             $user_details->network = $network;
 
@@ -94,6 +93,11 @@ class GooglePlusCrawler {
     /**
      * Check the validity of G+'s OAuth token by requestig the instance user's details.
      * Fetch details from Google+ API for the current instance user and insert into the datastore.
+     * @param str $client_id
+     * @param str $client_secret
+     * @param str $access_token
+     * @param str $refresh_token
+     * @param str $owner_id
      * @return User
      */
     public function initializeInstanceUser($client_id, $client_secret, $access_token, $refresh_token, $owner_id) {
@@ -130,9 +134,19 @@ class GooglePlusCrawler {
         return $user_object;
     }
 
+    /**
+     * Retrieve OAuth and refresh tokens from Google API as per:
+     * http://code.google.com/apis/accounts/docs/OAuth2.html#SS
+     * @param str $client_id
+     * @param str $client_secret
+     * @param str $code_refresh_token Either the refresh token or Google-provided code
+     * @param str $grant_type Either 'refresh_token' or 'authorization_code'
+     * @param str $redirect_uri
+     * @return Object with access_token and refresh_token member vars
+     */
     public static function getOAuthTokens($client_id, $client_secret, $code_refresh_token, $grant_type,
     $redirect_uri=null) {
-        //prep access token request URL as per http://code.google.com/apis/accounts/docs/OAuth2.html#SS
+        //prep access token request URL
         $access_token_request_url = "https://accounts.google.com/o/oauth2/token";
         $fields = array(
             'client_id'=>urlencode($client_id),
@@ -154,8 +168,11 @@ class GooglePlusCrawler {
 
     /**
      * Capture the current instance users's posts and store them in the database.
+     * @return null
      */
     public function fetchInstanceUserPosts() {
+        //For now only capture the most recent 20 posts
+        //@TODO Page back through all the archives
         $fields = array('alt'=>'json', 'maxResults'=>20, 'pp'=>1);
         $user_posts = GooglePlusAPIAccessor::apiRequest('people/'.$this->instance->network_user_id.
         '/activities/public', $this->access_token, $fields);
@@ -165,6 +182,7 @@ class GooglePlusCrawler {
         foreach ($user_posts->items as $item) {
             $should_capture_post = false;
             //For now we're only capturing posts and shares
+            //@TODO Capture all types of posts
             if ($item->verb == "post") {
                 $post['post_text'] = $item->object->content;
                 $should_capture_post = true;

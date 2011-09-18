@@ -2244,9 +2244,11 @@ class TestOfPostMySQLDAO extends ThinkUpUnitTestCase {
         $builders[] = FixtureBuilder::build('follows', array('user_id'=>13, 'follower_id'=>18));
         $builders[] = FixtureBuilder::build('follows', array('user_id'=>123456, 'follower_id'=>18));
         $dao = new PostMySQLDAO();
+
         $res = $dao->getPostsByFriends(18, 'twitter', 5, 1, false); // not public
         $this->assertEqual(count($res), 5);
-        $this->assertEqual($res[0]->author_user_id, 123456);
+        $this->assertEqual($res[0]->author_user_id, 13);
+
         $res = $dao->getPostsByFriends(18, 'twitter', 5, 1, true); // public
         $this->assertEqual(count($res), 5);
         $this->assertEqual($res[0]->author_user_id,13);

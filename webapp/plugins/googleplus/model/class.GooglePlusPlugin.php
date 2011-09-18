@@ -24,7 +24,7 @@
  * @license http://www.gnu.org/licenses/gpl.html
  * @copyright 2011 Gina Trapani
  */
-class GooglePlusPlugin implements CrawlerPlugin, DashboardPlugin {
+class GooglePlusPlugin implements CrawlerPlugin, DashboardPlugin, PostDetailPlugin {
 
     public function activate() {
     }
@@ -90,31 +90,30 @@ class GooglePlusPlugin implements CrawlerPlugin, DashboardPlugin {
     public function getPostDetailMenuItems($post) {
         $template_path = Utils::getPluginViewDirectory('googleplus').'googleplus.inline.view.tpl';
         $menu_items = array();
-
-        //Define a menu item
-        $hello_menu_item_1 = new MenuItem("Data vis 1", "First data visualization", $template_path,
-        'Hello ThinkUp Plugin Menu Header');
-        //Define a dataset to be displayed when that menu item is selected
-        $hello_menu_item_dataset_1 = new Dataset("replies_1", 'PostDAO', "getRepliesToPost",
-        array($post->post_id, $post->network, 'location') );
-        //Associate dataset with menu item
-        $hello_menu_item_1->addDataset($hello_menu_item_dataset_1);
-        //Add menu item to menu items array
-        $menu_items['data_vis_1'] = $hello_menu_item_1;
-
-        //Define a menu item
-        $hello_menu_item_2 = new MenuItem("Data vis 2", "Second data visualization", $template_path);
-        //Define a dataset to be displayed when that menu item is selected
-        $hello_menu_item_dataset_2 = new Dataset("replies_2", 'PostDAO', "getRepliesToPost",
-        array($post->post_id, $post->network, 'location') );
-        //Associate dataset with menu item
-        $hello_menu_item_2->addDataset($hello_menu_item_dataset_2);
-        //Add menu item to menu items array
-        $menu_items['data_vis_2'] = $hello_menu_item_2;
-
+        //
+        //        //Define a menu item
+        //        $hello_menu_item_1 = new MenuItem("Data vis 1", "First data visualization", $template_path,
+        //        'Hello ThinkUp Plugin Menu Header');
+        //        //Define a dataset to be displayed when that menu item is selected
+        //        $hello_menu_item_dataset_1 = new Dataset("replies_1", 'PostDAO', "getRepliesToPost",
+        //        array($post->post_id, $post->network, 'location') );
+        //        //Associate dataset with menu item
+        //        $hello_menu_item_1->addDataset($hello_menu_item_dataset_1);
+        //        //Add menu item to menu items array
+        //        $menu_items['data_vis_1'] = $hello_menu_item_1;
+        //
+        //        //Define a menu item
+        //        $hello_menu_item_2 = new MenuItem("Data vis 2", "Second data visualization", $template_path);
+        //        //Define a dataset to be displayed when that menu item is selected
+        //        $hello_menu_item_dataset_2 = new Dataset("replies_2", 'PostDAO', "getRepliesToPost",
+        //        array($post->post_id, $post->network, 'location') );
+        //        //Associate dataset with menu item
+        //        $hello_menu_item_2->addDataset($hello_menu_item_dataset_2);
+        //        //Add menu item to menu items array
+        //        $menu_items['data_vis_2'] = $hello_menu_item_2;
+        //
         return $menu_items;
     }
-
 
     public function getDashboardMenuItems($instance) {
         $gp_data_tpl = Utils::getPluginViewDirectory('googleplus').'googleplus.inline.view.tpl';
@@ -158,4 +157,5 @@ class GooglePlusPlugin implements CrawlerPlugin, DashboardPlugin {
          */
         return $menus;
     }
+
 }

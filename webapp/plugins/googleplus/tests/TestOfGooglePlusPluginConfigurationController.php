@@ -212,6 +212,7 @@ class TestOfGooglePlusPluginConfigurationController extends ThinkUpUnitTestCase 
     }
 
     public function testConfigNotSet() {
+        $builder = FixtureBuilder::build('owners', array('email' => 'me@example.com', 'user_activated' => 1) );
         $plugin_options_dao = DAOFactory::getDAO("PluginOptionDAO");
         PluginOptionMySQLDAO::$cached_options = array();
         $this->simulateLogin('me@example.com');
@@ -232,6 +233,8 @@ class TestOfGooglePlusPluginConfigurationController extends ThinkUpUnitTestCase 
 
     public function testConfigSet() {
         $builders = $this->buildPluginOptions();
+        $builder = FixtureBuilder::build('owners', array('email' => 'me@example.com', 'user_activated' => 1) );
+
         $plugin_options_dao = DAOFactory::getDAO("PluginOptionDAO");
         PluginOptionMySQLDAO::$cached_options = array();
         $this->simulateLogin('me@example.com');

@@ -780,7 +780,7 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
         $q .= "   SELECT user_id FROM #prefix#follows AS f ";
         $q .= "   WHERE f.follower_id=:user_id AND f.active=1 AND f.network=:network ";
         $q .= ")";
-        $q .= "ORDER BY p.post_id DESC ";
+        $q .= "ORDER BY p.id DESC ";
         $q .= "LIMIT :start_on_record, :limit";
         $vars = array(
             ':user_id'=>$user_id,
