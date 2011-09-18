@@ -138,4 +138,18 @@ class TestOfGooglePlusCrawler extends ThinkUpUnitTestCase {
         $this->assertEqual($tokens->access_token, 'faux-access-token');
         $this->assertEqual($tokens->refresh_token, 'faux-refresh-token');
     }
+
+    public function testFetchInstanceUserPosts() {
+        $gpc = new GooglePlusCrawler($this->profile1_instance, 'fauxaccesstoken', 10);
+        $gpc->fetchInstanceUserPosts();
+
+        $post_dao = new PostMySQLDAO();
+        $post = $post_dao->getPost('z12is5v4snurihgdl22iiz3pjrnws3lle', 'google+', true);
+        $this->assertIsA($post, 'Post');
+        $this->assertEqual($post->post_text,
+        'I&#39;ve got a date with the G+ API this weekend to make a ThinkUp plugin!');
+        $this->assertEqual($post->reply_count_cache, 24);
+        $this->assertEqual($post->favlike_count_cache, 159);
+        $this->assertEqual($post->retweet_count_cache, 29);
+    }
 }

@@ -39,6 +39,11 @@ class GooglePlusAPIAccessor {
     public static function apiRequest($path, $access_token, $fields=null) {
         $api_domain = 'https://www.googleapis.com/plus/v1/';
         $url = $api_domain.$path.'?access_token='.$access_token;
+        if ($fields != null ) {
+            foreach ($fields as $key=>$value) {
+                $url = $url.'&'.$key.'='.$value;
+            }
+        }
         $FAUX_DATA_PATH = THINKUP_ROOT_PATH . 'webapp/plugins/googleplus/tests/testdata/';
         $url = str_replace($api_domain, '', $url);
         $url = str_replace('/', '_', $url);

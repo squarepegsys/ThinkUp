@@ -69,7 +69,7 @@ class GooglePlusCrawler {
         $user_object = null;
         if ($force_reload_from_googleplus || !$user_dao->isUserInDB($user_id, $network)) {
             // Get owner user details and save them to DB
-            $fields = 'displayName,id,image,tagline';
+            $fields = array('fields'=>'displayName,id,image,tagline');
             //@TODO: Actually fetch user data from Google+ API
             $user_details = GooglePlusAPIAccessor::apiRequest('people/'.$user_id, $this->access_token, $fields);
             $user_details->network = $network;
@@ -101,7 +101,7 @@ class GooglePlusCrawler {
         $user_dao = DAOFactory::getDAO('UserDAO');
         $user_object = null;
         // Get owner user details and save them to DB
-        $fields = 'displayName,id,image,tagline';
+        $fields = array('fields'=>'displayName,id,image,tagline');
         $user_details = GooglePlusAPIAccessor::apiRequest('people/me', $this->access_token, $fields);
 
         if (isset($user_details->error->code) && $user_details->error->code == '401') {
@@ -150,6 +150,38 @@ class GooglePlusCrawler {
         //get tokens
         $tokens = GooglePlusAPIAccessor::rawPostApiRequest($access_token_request_url, $fields, true);
         return $tokens;
+    }
+
+    /**
+     * Capture the current instance users's posts and store them in the database.
+     */
+    public function fetchInstanceUserPosts() {
+        $fields = array('alt'=>'json', 'maxResults'=>20, 'pp'=>1);
+        $user_posts = GooglePlusAPIAccessor::apiRequest('people/'.$this->instance->network_user_id.
+        '/activities/public', $this->access_token, $fields);
+
+        $post_dao = DAOFactory::getDAO('PostDAO');
+        foreach ($user_posts->items as $item) {
+            $post['post_id'] = $item->id;
+            $post['author_username'] = $item->actor->displayName;
+            $post['author_fullname'] = $item->actor->displayName;
+            $post['author_avatar'] = $item->actor->image->url;
+            $post['author_user_id'] = $item->actor->id;
+            $post['pub_date'] = $item->published;
+            $post['source'] = '';
+            $post['is_protected'] = false;
+            $post['network'] = 'google+';
+            $post['reply_count_cache'] = $item->object->replies->totalItems;
+            $post['favlike_count_cache'] = $item->object->plusoners->totalItems;
+            $post['retweet_count_cache'] = $item->object->resharers->totalItems;
+            if ($item->verb == "post") {
+                $post['post_text'] = $item->object->content;
+            } else {
+                $post['post_text'] = '';
+            }
+            $total_posts_added = $post_dao->addPost($post);
+            $post = null;
+        }
     }
 
     /**

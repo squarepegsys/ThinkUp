@@ -34,6 +34,15 @@ COMMENT  'The ID of the user that this post is in reply to.';
 ALTER TABLE  tu_posts_b16 CHANGE  in_rt_of_user_id  in_rt_of_user_id VARCHAR( 30 ) NULL DEFAULT NULL
 COMMENT  'The ID of the user that this post is retweeting. [Twitter-specific]';
 
+ALTER TABLE  tu_posts_b16 CHANGE  post_id  post_id VARCHAR( 30 ) NOT NULL
+COMMENT  'The ID of the post inside the respective service.';
+
+ALTER TABLE  tu_posts_b16 CHANGE  in_reply_to_post_id  in_reply_to_post_id VARCHAR( 30 ) NULL DEFAULT NULL
+COMMENT  'The ID of the post that this post is in reply to.';
+
+ALTER TABLE  tu_posts_b16 CHANGE  in_retweet_of_post_id  in_retweet_of_post_id VARCHAR( 30 ) NULL DEFAULT NULL
+COMMENT  'The ID of the post that this post is a retweet of. [Twitter-specific]';
+
 INSERT INTO tu_posts_b16 (SELECT * FROM tu_posts);
 
 RENAME TABLE tu_posts TO tu_posts_b15;

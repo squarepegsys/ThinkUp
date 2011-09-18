@@ -34,14 +34,16 @@ class GooglePlusAPIAccessor {
      * Make an API request.
      * @param str $path
      * @param str $access_token
-     * @param str $fields Comma-delimited list of fields to return from FB API
+     * @param arr $fields Array of URL parameters
      * @return array Decoded JSON response
      */
     public static function apiRequest($path, $access_token, $fields=null) {
         $api_domain = 'https://www.googleapis.com/plus/v1/';
         $url = $api_domain.$path.'?access_token='.$access_token;
         if ($fields != null ) {
-            $url = $url.'&fields='.$fields;
+            foreach ($fields as $key=>$value) {
+                $url = $url.'&'.$key.'='.$value;
+            }
         }
         $result = Utils::getURLContents($url);
         return json_decode($result);

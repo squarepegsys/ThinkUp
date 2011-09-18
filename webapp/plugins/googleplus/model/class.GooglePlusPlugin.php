@@ -74,6 +74,8 @@ class GooglePlusPlugin implements CrawlerPlugin, DashboardPlugin {
                     $crawler->initializeInstanceUser($options['google_plus_client_id']->option_value,
                     $options['google_plus_client_secret']->option_value, $access_token, $refresh_token,
                     $current_owner->id);
+
+                    $crawler->fetchInstanceUserPosts();
                 } catch (Exception $e) {
                     $logger->logUserError('EXCEPTION: '.$e->getMessage(), __METHOD__.','.__LINE__);
                 }
