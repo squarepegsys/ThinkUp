@@ -16,7 +16,7 @@ $show_favorites_instead_of_retweets (optional) If set or not false, show favorit
       {if $post->network eq 'twitter'}
         {if $show_favorites_instead_of_retweets}favorites{else}retweets{/if}
      {else}
-        {if $show_favorites_instead_of_retweets}likes{/if}
+        {if $show_favorites_instead_of_retweets}{if $post->network eq 'google+'}+1's{else}likes{/if}{/if}
      {/if}
     </div>
     <div class="grid_2 center omega">
@@ -33,7 +33,11 @@ $show_favorites_instead_of_retweets (optional) If set or not false, show favorit
           {if $scrub_reply_username}
             {$post->post_text|filter_xss|regex_replace:"/^@[a-zA-Z0-9_]+/":""|link_usernames_to_twitter}
           {else}
+          {if $post->network == 'google+'}
+            {$post->post_text}
+           {else}
             {$post->post_text|filter_xss|link_usernames_to_twitter}
+            {/if}
           {/if}
         {/if}
       {if $post->link->expanded_url}

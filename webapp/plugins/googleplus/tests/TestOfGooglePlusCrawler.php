@@ -151,5 +151,13 @@ class TestOfGooglePlusCrawler extends ThinkUpUnitTestCase {
         $this->assertEqual($post->reply_count_cache, 24);
         $this->assertEqual($post->favlike_count_cache, 159);
         $this->assertEqual($post->retweet_count_cache, 29);
+        $this->assertIsA($post->link, 'Link');
+        $this->assertEqual($post->link->url,
+        'http://googleplusplatform.blogspot.com/2011/09/getting-started-on-google-api.html');
+        $this->assertEqual($post->link->title,
+        'Getting Started on the Google+ API - Google+ Platform Blog');
+        $this->assertEqual($post->link->description,
+        'Official source of information about the Google+ platform');
+        $this->assertEqual($post->link->image_src, '');
     }
 }

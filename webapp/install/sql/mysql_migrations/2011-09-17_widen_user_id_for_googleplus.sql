@@ -14,6 +14,8 @@ COMMENT  'User ID who favorited post on a given network.';
 DROP TABLE IF EXISTS tu_users_b16;
 CREATE TABLE tu_users_b16 LIKE tu_users;
 ALTER TABLE  tu_users_b16 CHANGE  user_id  user_id VARCHAR( 30 ) NOT NULL  COMMENT 'User ID on a given network.';
+ALTER TABLE  tu_users_b16 CHANGE  last_post_id  last_post_id VARCHAR( 50 ) NOT NULL 
+COMMENT 'Network post ID of the latest post the user authored.';
 
 INSERT INTO tu_users_b16 (SELECT * FROM tu_users);
 
@@ -34,13 +36,13 @@ COMMENT  'The ID of the user that this post is in reply to.';
 ALTER TABLE  tu_posts_b16 CHANGE  in_rt_of_user_id  in_rt_of_user_id VARCHAR( 30 ) NULL DEFAULT NULL
 COMMENT  'The ID of the user that this post is retweeting. [Twitter-specific]';
 
-ALTER TABLE  tu_posts_b16 CHANGE  post_id  post_id VARCHAR( 30 ) NOT NULL
+ALTER TABLE  tu_posts_b16 CHANGE  post_id  post_id VARCHAR( 50 ) NOT NULL
 COMMENT  'The ID of the post inside the respective service.';
 
-ALTER TABLE  tu_posts_b16 CHANGE  in_reply_to_post_id  in_reply_to_post_id VARCHAR( 30 ) NULL DEFAULT NULL
+ALTER TABLE  tu_posts_b16 CHANGE  in_reply_to_post_id  in_reply_to_post_id VARCHAR( 50 ) NULL DEFAULT NULL
 COMMENT  'The ID of the post that this post is in reply to.';
 
-ALTER TABLE  tu_posts_b16 CHANGE  in_retweet_of_post_id  in_retweet_of_post_id VARCHAR( 30 ) NULL DEFAULT NULL
+ALTER TABLE  tu_posts_b16 CHANGE  in_retweet_of_post_id  in_retweet_of_post_id VARCHAR( 50 ) NULL DEFAULT NULL
 COMMENT  'The ID of the post that this post is a retweet of. [Twitter-specific]';
 
 INSERT INTO tu_posts_b16 (SELECT * FROM tu_posts);
@@ -109,6 +111,9 @@ CREATE TABLE tu_post_errors_b16 (
   PRIMARY KEY (id),
   KEY post_id (post_id,network)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT 'Errors in response to requests for post information.';
+
+ALTER TABLE  tu_post_errors CHANGE  post_id  post_id VARCHAR( 50 ) NOT NULL
+COMMENT 'Post ID on the originating service.';
 
 INSERT INTO tu_post_errors_b16 (SELECT * FROM tu_user_errors);
 
