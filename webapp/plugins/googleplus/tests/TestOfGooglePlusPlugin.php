@@ -86,7 +86,7 @@ class TestOfGooglePlusPlugin extends ThinkUpUnitTestCase {
         $this->assertEqual($post_tab_dataset->dao_method_name, "getMostRepliedToPosts");
 
         $post_tab = $menus['most_plus_oned'];
-        $this->assertEqual($post_tab->name, "Most liked");
+        $this->assertEqual($post_tab->name, "Most +1'ed");
         $this->assertEqual($post_tab->description, "Posts with most +1's");
         $post_tab_datasets = $post_tab->getDatasets();
         $post_tab_dataset = $post_tab_datasets[0];

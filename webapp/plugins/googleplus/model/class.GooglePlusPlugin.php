@@ -70,7 +70,6 @@ class GooglePlusPlugin implements CrawlerPlugin, DashboardPlugin, PostDetailPlug
                 $instance_dao->updateLastRun($instance->id);
                 $crawler = new GooglePlusCrawler($instance, $access_token);
                 try {
-                    //@TODO Make this fetchPosts when that's ready
                     $crawler->initializeInstanceUser($options['google_plus_client_id']->option_value,
                     $options['google_plus_client_secret']->option_value, $access_token, $refresh_token,
                     $current_owner->id);
@@ -127,7 +126,7 @@ class GooglePlusPlugin implements CrawlerPlugin, DashboardPlugin, PostDetailPlug
         $menus["most_replied_to_gplus"] = $mrttab;
 
         // Most liked posts
-        $mltab = new MenuItem("Most liked", "Posts with most +1's", $gp_data_tpl);
+        $mltab = new MenuItem("Most +1'ed", "Posts with most +1's", $gp_data_tpl);
         $mltabds = new Dataset("gplus_posts", 'PostDAO', "getMostFavedPosts",
         array($instance->network_user_id, $instance->network, 15, '#page_number#'));
         $mltabds->addHelp('userguide/listings/googleplus/dashboard_mostlikes');

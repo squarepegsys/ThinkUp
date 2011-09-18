@@ -112,7 +112,7 @@ class TestOfPostMySQLDAO extends ThinkUpUnitTestCase {
             $builders[] = FixtureBuilder::build('posts', array('post_id'=>$counter, 'author_user_id'=>13,
             'author_username'=>'ev', 'author_fullname'=>'Ev Williams', 'author_avatar'=>'avatar.jpg', 
             'post_text'=>'This is post '.$counter, 'source'=>$source, 'pub_date'=>'2006-01-01 00:'.
-            $pseudo_minute.':00', 'reply_count_cache'=>rand(0, 4), 'is_protected'=>0,
+            $pseudo_minute.':00', 'reply_count_cache'=>($counter==10)?0:rand(0, 4), 'is_protected'=>0,
             'retweet_count_cache'=>floor($counter/2), 'network'=>'twitter',
             'old_retweet_count_cache' => floor($counter/3), 'in_rt_of_user_id' => null,
             'in_reply_to_post_id'=>null, 'in_retweet_of_post_id'=>null, 'is_geo_encoded'=>0));

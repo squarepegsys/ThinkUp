@@ -159,5 +159,13 @@ class TestOfGooglePlusCrawler extends ThinkUpUnitTestCase {
         $this->assertEqual($post->link->description,
         'Official source of information about the Google+ platform');
         $this->assertEqual($post->link->image_src, '');
+
+        //now crawl on updated data and assert counts get updated in database
+        $gpc->api_accessor->setDataLocation('new_counts/');
+        $gpc->fetchInstanceUserPosts();
+        $post = $post_dao->getPost('z12is5v4snurihgdl22iiz3pjrnws3lle', 'google+', true);
+        $this->assertEqual($post->reply_count_cache, 64);
+        $this->assertEqual($post->favlike_count_cache, 199);
+        $this->assertEqual($post->retweet_count_cache, 69);
     }
 }
