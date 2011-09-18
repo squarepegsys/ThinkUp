@@ -10,8 +10,8 @@
     {/if}
 </div>
 
-{if ($display eq 'all_gplus_posts' and not $all_gplus_posts) or 
-    ($display eq 'all_gplus_replies' and not $all_gplus_replies) }
+{if ($display eq 'all_gplus_posts' and not $gplus_posts) or 
+    ($display eq 'most_replied_to_posts' and not $gplus_posts) }
   <div class="ui-state-highlight ui-corner-all" style="margin: 20px 0px; padding: .5em 0.7em;"> 
     <p>
       <span class="ui-icon ui-icon-info" style="float: left; margin:.3em 0.3em 0 0;"></span>
@@ -20,9 +20,9 @@
   </div>
 {/if}
 
-{if $all_gplus_posts and ($display eq 'all_gplus_posts' OR $display eq 'questions')}
+{if $gplus_posts}
 <div id="all-posts-div">
-  {foreach from=$all_gplus_posts key=tid item=t name=foo}
+  {foreach from=$gplus_posts key=tid item=t name=foo}
     {include file="_post.tpl" t=$t}
   {/foreach}
 </div>

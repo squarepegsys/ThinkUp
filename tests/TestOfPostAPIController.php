@@ -827,7 +827,7 @@ class TestOfPostAPIController extends ThinkUpUnitTestCase {
         $controller = new PostAPIController(true);
         $output = json_decode($controller->go());
         $this->assertEqual(sizeof($output), 1);
-        $this->assertEqual($output[0]->id, 135);
+        $this->assertEqual($output[0]->id, 137);
 
         $_GET['page'] = 2;
         $controller = new PostAPIController(true);
@@ -839,7 +839,7 @@ class TestOfPostAPIController extends ThinkUpUnitTestCase {
         $controller = new PostAPIController(true);
         $output = json_decode($controller->go());
         $this->assertEqual(sizeof($output), 1);
-        $this->assertEqual($output[0]->id, 137);
+        $this->assertEqual($output[0]->id, 135);
 
         // test trim user
         unset($_GET['count'], $_GET['page']);
@@ -1266,26 +1266,6 @@ class TestOfPostAPIController extends ThinkUpUnitTestCase {
             $date = strtotime($post->created_at);
         }
 
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'DESC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id <= $id);
-            $id = $post->id;
-        }
-
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'ASC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id >= $id);
-            $id = $post->id;
-        }
-
         $_GET['order_by'] = 'source';
         $_GET['direction'] = 'DESC';
         $controller = new PostAPIController(true);
@@ -1449,26 +1429,6 @@ class TestOfPostAPIController extends ThinkUpUnitTestCase {
         foreach ($output as $post) {
             $this->assertTrue(strtotime($post->created_at) >= $date);
             $date = strtotime($post->created_at);
-        }
-
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'DESC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id <= $id);
-            $id = $post->id;
-        }
-
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'ASC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id >= $id);
-            $id = $post->id;
         }
 
         $_GET['order_by'] = 'source';
@@ -1650,26 +1610,6 @@ class TestOfPostAPIController extends ThinkUpUnitTestCase {
             $date = strtotime($post->created_at);
         }
 
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'DESC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id <= $id);
-            $id = $post->id;
-        }
-
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'ASC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id >= $id);
-            $id = $post->id;
-        }
-
         $_GET['order_by'] = 'source';
         $_GET['direction'] = 'DESC';
         $controller = new PostAPIController(true);
@@ -1827,26 +1767,6 @@ class TestOfPostAPIController extends ThinkUpUnitTestCase {
             $date = strtotime($post->created_at);
         }
 
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'DESC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id <= $id);
-            $id = $post->id;
-        }
-
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'ASC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id >= $id);
-            $id = $post->id;
-        }
-
         $_GET['order_by'] = 'source';
         $_GET['direction'] = 'DESC';
         $controller = new PostAPIController(true);
@@ -1977,26 +1897,6 @@ class TestOfPostAPIController extends ThinkUpUnitTestCase {
         foreach ($output as $post) {
             $this->assertTrue(strtotime($post->created_at) >= $date);
             $date = strtotime($post->created_at);
-        }
-
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'DESC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id <= $id);
-            $id = $post->id;
-        }
-
-        $_GET['order_by'] = 'post_id';
-        $_GET['direction'] = 'ASC';
-        $controller = new PostAPIController(true);
-        $output = json_decode($controller->go());
-        $id = $output[0]->id;
-        foreach ($output as $post) {
-            $this->assertTrue($post->id >= $id);
-            $id = $post->id;
         }
 
         $_GET['order_by'] = 'source';

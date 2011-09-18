@@ -107,9 +107,11 @@ class GooglePlusPluginConfigurationController extends PluginConfigurationControl
         if (isset($_GET['code'])) {
             $code = $_GET['code'];
 
-            $tokens = GooglePlusCrawler::getOAuthTokens($client_id, $client_secret, $code, 'authorization_code',
+            $crawler = new GooglePlusCrawler(null, null);
+            $tokens = $crawler->getOAuthTokens($client_id, $client_secret, $code, 'authorization_code',
             $redirect_uri);
-            $gplus_user = GooglePlusAPIAccessor::apiRequest('people/me', $tokens->access_token, null);
+            $gplus_api_accessor = new GooglePlusAPIAccessor();
+            $gplus_user = $gplus_api_accessor->apiRequest('people/me', $tokens->access_token, null);
             $gplus_user_id = $gplus_user->id;
             $gplus_username = $gplus_user->displayName;
 

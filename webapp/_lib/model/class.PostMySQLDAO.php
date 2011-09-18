@@ -1417,4 +1417,30 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
         return $this->getUpdateCount($ps);
     }
 
+    public function updateReplyCount($post_id, $network, $reply_count) {
+        $q = " UPDATE #prefix#posts SET reply_count_cache=:reply_count_cache WHERE post_id=:post_id ";
+        $q .= "AND network=:network;";
+        $vars = array(
+            ':reply_count_cache'=>$reply_count,
+            ':post_id'=>$post_id,
+            ':network'=>$network
+        );
+        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        $ps = $this->execute($q, $vars);
+        return $this->getUpdateCount($ps);
+    }
+
+    public function updateRetweetCount($post_id, $network, $retweet_count) {
+        $q = " UPDATE #prefix#posts SET retweet_count_cache=:retweet_count_cache WHERE post_id=:post_id ";
+        $q .= "AND network=:network;";
+        $vars = array(
+            ':retweet_count_cache'=>$retweet_count,
+            ':post_id'=>$post_id,
+            ':network'=>$network
+        );
+        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        $ps = $this->execute($q, $vars);
+        return $this->getUpdateCount($ps);
+    }
+
 }

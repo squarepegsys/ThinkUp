@@ -31,21 +31,29 @@
  */
 class GooglePlusAPIAccessor {
     /**
+     * @var str
+     */
+    var $api_domain = 'https://www.googleapis.com/plus/v1/';
+
+    /**
+     * @var str
+     */
+    var $data_location = 'webapp/plugins/googleplus/tests/testdata/';
+    /**
      * Make a Google+ API request.
      * @param str $path
      * @param str $access_token
      * @return array Decoded JSON response
      */
-    public static function apiRequest($path, $access_token, $fields=null) {
-        $api_domain = 'https://www.googleapis.com/plus/v1/';
-        $url = $api_domain.$path.'?access_token='.$access_token;
+    public function apiRequest($path, $access_token, $fields=null) {
+        $url = $this->api_domain.$path.'?access_token='.$access_token;
         if ($fields != null ) {
             foreach ($fields as $key=>$value) {
                 $url = $url.'&'.$key.'='.$value;
             }
         }
-        $FAUX_DATA_PATH = THINKUP_ROOT_PATH . 'webapp/plugins/googleplus/tests/testdata/';
-        $url = str_replace($api_domain, '', $url);
+        $FAUX_DATA_PATH = THINKUP_ROOT_PATH . $this->data_location;
+        $url = str_replace($this->api_domain, '', $url);
         $url = str_replace('/', '_', $url);
         $url = str_replace('&', '-', $url);
         $url = str_replace('?', '-', $url);
@@ -72,31 +80,6 @@ class GooglePlusAPIAccessor {
     }
 
     /**
-     * Make a Graph API request with the absolute URL. This URL needs to
-     * include the https://graph.googleplus.com/ at the start and the
-     * access token at the end as well as everything in between. It is
-     * literally the raw URL that needs to be passed in.
-     *
-     * @param str $path
-     * @param book $decode_json If true, return decoded JSON
-     * @return array Decoded JSON response
-     */
-    public static function rawApiRequest($path, $decode_json=true) {
-        $url = $path;
-
-        $FAUX_DATA_PATH = THINKUP_ROOT_PATH . 'webapp/plugins/googleplus/tests/testdata/';
-
-        $url = preg_replace('/([\?\&])access_token\=[^\?\&]+([\?\&])*/', "$1", $url);
-        $url = preg_replace('/[\?\&]$/', '', $url);
-        $url = str_replace('https://www.googleapis.com/plus/v1/', '', $url);
-        //$url = str_replace('?access_token=fauxaccesstoken', '', $url);
-        $url = str_replace('/', '_', $url);
-        $url = str_replace('&', '-', $url);
-        $url = str_replace('?', '-', $url);
-        return self::decodeFileContents($FAUX_DATA_PATH.$url, $decode_json);
-    }
-
-    /**
      * Make a Graph API request with the absolute URL. This URL needs to include the https://graph.googleplus.com/ at
      * the start and the access token at the end as well as everything in between. It is literally the raw URL that
      * needs to be passed in.
@@ -105,7 +88,7 @@ class GooglePlusAPIAccessor {
      * @param bool $decode_json Defaults to true, if true returns decoded JSON
      * @return array Decoded JSON response
      */
-    public static function rawPostApiRequest($path, $fields, $decode_json=true) {
+    public function rawPostApiRequest($path, $fields, $decode_json=true) {
         $fields_string = '';
         foreach($fields as $key=>$value) {
             $fields_string .= $key.'='.$value.'&';
@@ -113,5 +96,33 @@ class GooglePlusAPIAccessor {
         rtrim($fields_string,'&');
 
         return self::rawApiRequest($path.$fields_string, $decode_json);
+    }
+
+    /**
+     * Internal use only
+     * @param str $path
+     * @param book $decode_json If true, return decoded JSON
+     * @return array Decoded JSON response
+     */
+    private function rawApiRequest($path, $decode_json=true) {
+        $url = $path;
+
+        $FAUX_DATA_PATH = THINKUP_ROOT_PATH . $this->data_location;
+
+        $url = preg_replace('/([\?\&])access_token\=[^\?\&]+([\?\&])*/', "$1", $url);
+        $url = preg_replace('/[\?\&]$/', '', $url);
+        $url = str_replace($this->api_domain, '', $url);
+        $url = str_replace('/', '_', $url);
+        $url = str_replace('&', '-', $url);
+        $url = str_replace('?', '-', $url);
+        return self::decodeFileContents($FAUX_DATA_PATH.$url, $decode_json);
+    }
+
+    /**
+     * For testing purposes only
+     * @param str $folder
+     */
+    public function setDataLocation($folder) {
+        $this->data_location = $this->data_location.$folder;
     }
 }

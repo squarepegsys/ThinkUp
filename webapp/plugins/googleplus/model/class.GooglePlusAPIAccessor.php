@@ -31,15 +31,18 @@
  */
 class GooglePlusAPIAccessor {
     /**
+     * @var str
+     */
+    var $api_domain = 'https://www.googleapis.com/plus/v1/';
+    /**
      * Make an API request.
      * @param str $path
      * @param str $access_token
      * @param arr $fields Array of URL parameters
      * @return array Decoded JSON response
      */
-    public static function apiRequest($path, $access_token, $fields=null) {
-        $api_domain = 'https://www.googleapis.com/plus/v1/';
-        $url = $api_domain.$path.'?access_token='.$access_token;
+    public function apiRequest($path, $access_token, $fields=null) {
+        $url = $this->api_domain.$path.'?access_token='.$access_token;
         if ($fields != null ) {
             foreach ($fields as $key=>$value) {
                 $url = $url.'&'.$key.'='.$value;
@@ -58,7 +61,7 @@ class GooglePlusAPIAccessor {
      * @param bool $decode_json Defaults to true, if true returns decoded JSON
      * @return array Decoded JSON response
      */
-    public static function rawPostApiRequest($path, $fields, $decode_json=true) {
+    public function rawPostApiRequest($path, $fields, $decode_json=true) {
         $result = Utils::getURLContentsViaPost($path, $fields);
         if ($decode_json) {
             $result = json_decode($result);

@@ -65,18 +65,44 @@ class TestOfGooglePlusPlugin extends ThinkUpUnitTestCase {
         $menus = $webapp->getDashboardMenu($instance);
         $posts_menu = $menus["all_gplus_posts"];
 
-        $this->assertEqual(sizeof($menus), 1);
-        $first_post_tab = $menus['all_gplus_posts'];
-        $this->assertEqual($first_post_tab->name, "All posts", "Test name of first post tab");
-        $this->assertEqual($first_post_tab->description, "All posts");
+        $this->assertEqual(sizeof($menus), 4);
 
-        $first_post_tab_datasets = $first_post_tab->getDatasets();
-        $first_post_tab_dataset = $first_post_tab_datasets[0];
-        $this->assertEqual($first_post_tab_dataset->name, "all_gplus_posts",
-        "Test first post tab's first dataset name");
-        $this->assertEqual($first_post_tab_dataset->dao_name, 'PostDAO');
-        $this->assertEqual($first_post_tab_dataset->dao_method_name, "getAllPosts",
-        "Test first post tab's first dataset fetching method");
+        $post_tab = $menus['all_gplus_posts'];
+        $this->assertEqual($post_tab->name, "All posts");
+        $this->assertEqual($post_tab->description, "All posts");
+        $post_tab_datasets = $post_tab->getDatasets();
+        $post_tab_dataset = $post_tab_datasets[0];
+        $this->assertEqual($post_tab_dataset->name, "gplus_posts");
+        $this->assertEqual($post_tab_dataset->dao_name, 'PostDAO');
+        $this->assertEqual($post_tab_dataset->dao_method_name, "getAllPosts");
+
+        $post_tab = $menus['most_replied_to_gplus'];
+        $this->assertEqual($post_tab->name, "Most discussed");
+        $this->assertEqual($post_tab->description, "Posts with the most comments");
+        $post_tab_datasets = $post_tab->getDatasets();
+        $post_tab_dataset = $post_tab_datasets[0];
+        $this->assertEqual($post_tab_dataset->name, "gplus_posts");
+        $this->assertEqual($post_tab_dataset->dao_name, 'PostDAO');
+        $this->assertEqual($post_tab_dataset->dao_method_name, "getMostRepliedToPosts");
+
+        $post_tab = $menus['most_plus_oned'];
+        $this->assertEqual($post_tab->name, "Most liked");
+        $this->assertEqual($post_tab->description, "Posts with most +1's");
+        $post_tab_datasets = $post_tab->getDatasets();
+        $post_tab_dataset = $post_tab_datasets[0];
+        $this->assertEqual($post_tab_dataset->name, "gplus_posts");
+        $this->assertEqual($post_tab_dataset->dao_name, 'PostDAO');
+        $this->assertEqual($post_tab_dataset->dao_method_name, "getMostFavedPosts");
+
+        $post_tab = $menus['gplus_questions'];
+        $this->assertEqual($post_tab->name, "Inquiries");
+        $this->assertEqual($post_tab->description, "Inquiries, or posts with a question mark in them");
+        $post_tab_datasets = $post_tab->getDatasets();
+        $post_tab_dataset = $post_tab_datasets[0];
+        $this->assertEqual($post_tab_dataset->name, "gplus_posts");
+        $this->assertEqual($post_tab_dataset->dao_name, 'PostDAO');
+        $this->assertEqual($post_tab_dataset->dao_method_name, "getAllQuestionPosts");
+
         $logger->close();
     }
 }

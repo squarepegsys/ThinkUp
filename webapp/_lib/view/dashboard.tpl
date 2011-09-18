@@ -107,7 +107,7 @@
 
             {if $most_replied_to_1wk}
               <div class="clearfix">
-                <h2>This Week's Most Replied-To Posts</h2>
+                <h2>This Week's Most {if $instance->network eq 'google+'}Discussed{else}Replied-To{/if} Posts</h2>
                 {foreach from=$most_replied_to_1wk key=tid item=t name=foo}
                     {if $instance->network eq "twitter"}
                         {include file="_post.counts_no_author.tpl" post=$t headings="NONE"}
@@ -169,7 +169,7 @@
               <div class="clearfix">
                 <h2>This Week's Most {if $instance->network eq 'google+'}Reshared{else}Retweeted{/if}</h2>
                 {foreach from=$most_retweeted_1wk key=tid item=t name=foo}
-                  {include file="_post.counts_no_author.tpl" post=$t headings="NONE"}
+                  {include file="_post.counts_no_author.tpl" post=$t show_favorites_instead_of_retweets=false}
                 {/foreach}
               </div>
             {/if}

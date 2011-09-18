@@ -46,6 +46,11 @@ class GooglePlusCrawler {
     var $access_token;
     /**
      *
+     * @var GooglePlusAPIAccessor
+     */
+    var $api_accessor;
+    /**
+     *
      * @param Instance $instance
      * @return GooglePlusCrawler
      */
@@ -53,6 +58,7 @@ class GooglePlusCrawler {
         $this->instance = $instance;
         $this->logger = Logger::getInstance();
         $this->access_token = $access_token;
+        $this->api_accessor = new GooglePlusAPIAccessor();
     }
 
     /**
@@ -70,7 +76,7 @@ class GooglePlusCrawler {
         if ($force_reload_from_googleplus || !$user_dao->isUserInDB($user_id, $network)) {
             // Get owner user details and save them to DB
             $fields = array('fields'=>'displayName,id,image,tagline');
-            $user_details = GooglePlusAPIAccessor::apiRequest('people/'.$user_id, $this->access_token, $fields);
+            $user_details =  $this->api_accessor->apiRequest('people/'.$user_id, $this->access_token, $fields);
             $user_details->network = $network;
 
             $user = $this->parseUserDetails($user_details);
@@ -106,7 +112,7 @@ class GooglePlusCrawler {
         $user_object = null;
         // Get owner user details and save them to DB
         $fields = array('fields'=>'displayName,id,image,tagline');
-        $user_details = GooglePlusAPIAccessor::apiRequest('people/me', $this->access_token, $fields);
+        $user_details =  $this->api_accessor->apiRequest('people/me', $this->access_token, $fields);
 
         if (isset($user_details->error->code) && $user_details->error->code == '401') {
             //Token has expired, fetch and save a new one
@@ -115,7 +121,7 @@ class GooglePlusCrawler {
             $owner_instance_dao->updateTokens($owner_id, $this->instance->id, $access_token, $refresh_token);
             $this->access_token  = $tokens->access_token;
             //try again
-            $user_details = GooglePlusAPIAccessor::apiRequest('people/me', $this->access_token, $fields);
+            $user_details =  $this->api_accessor->apiRequest('people/me', $this->access_token, $fields);
         }
 
         $user_details->network = $network;
@@ -144,7 +150,7 @@ class GooglePlusCrawler {
      * @param str $redirect_uri
      * @return Object with access_token and refresh_token member vars
      */
-    public static function getOAuthTokens($client_id, $client_secret, $code_refresh_token, $grant_type,
+    public function getOAuthTokens($client_id, $client_secret, $code_refresh_token, $grant_type,
     $redirect_uri=null) {
         //prep access token request URL
         $access_token_request_url = "https://accounts.google.com/o/oauth2/token";
@@ -162,7 +168,7 @@ class GooglePlusCrawler {
             $fields['redirect_uri'] = $redirect_uri;
         }
         //get tokens
-        $tokens = GooglePlusAPIAccessor::rawPostApiRequest($access_token_request_url, $fields, true);
+        $tokens =  $this->api_accessor->rawPostApiRequest($access_token_request_url, $fields, true);
         return $tokens;
     }
 
@@ -174,7 +180,7 @@ class GooglePlusCrawler {
         //For now only capture the most recent 20 posts
         //@TODO Page back through all the archives
         $fields = array('alt'=>'json', 'maxResults'=>20, 'pp'=>1);
-        $user_posts = GooglePlusAPIAccessor::apiRequest('people/'.$this->instance->network_user_id.
+        $user_posts =  $this->api_accessor->apiRequest('people/'.$this->instance->network_user_id.
         '/activities/public', $this->access_token, $fields);
 
         $post_dao = DAOFactory::getDAO('PostDAO');
@@ -205,7 +211,12 @@ class GooglePlusCrawler {
                 $post['retweet_count_cache'] = $item->object->resharers->totalItems;
                 $total_posts_added = $post_dao->addPost($post);
 
-                //@TODO if not post was added, at least update reply/fave/reshare counts
+                //If no post was added, at least update reply/fave/reshare counts
+                if ($total_posts_added < 1) {
+                    $post_dao->updateFavLikeCount($post['post_id'], 'google+', $post['favlike_count_cache']);
+                    $post_dao->updateReplyCount($post['post_id'], 'google+', $post['reply_count_cache']);
+                    $post_dao->updateRetweetCount($post['post_id'], 'google+', $post['retweet_count_cache']);
+                }
 
                 if (isset($item->object->attachments)) {
                     $link_url = $item->object->attachments[0]->url;
